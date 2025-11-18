@@ -16,11 +16,19 @@
 
 int myHashInt(int key, int m) {
     // TODO: replace with your own design
-    return key % m;  // basic division method
+    long long int square = key * key;  //平方
+    square /= 10; //不取個位數
+    return square % m;
 }
 
 int myHashString(const std::string& str, int m) {
     unsigned long hash = 0;
     // TODO: replace with your own design
-    return static_cast<int>(hash % m);  // basic division method
+    for (int i = 0; i < str.size(); i++) {
+        hash += (int)str[i];
+    }
+    long long int square = hash * hash; //平方
+    square /= 10; //不取個位數
+
+    return static_cast<int>(square % m);  // basic division method
 }
