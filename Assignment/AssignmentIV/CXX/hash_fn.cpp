@@ -10,7 +10,7 @@
     - 2025/11/11: Initial implementation
     - 2025/11/17: Refactored to use hash_fn.hpp
 
-   Developer: Yu-Feng Huang <yfhuang@saturn.yzu.edu.tw>
+   Developer: 1131435張新誠 <s1131435@mail.yzu.edu.tw>
  */
 #include "hash_fn.hpp"
 
