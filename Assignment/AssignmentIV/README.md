@@ -112,100 +112,156 @@ Email: s1131435@mail.yzu.edu.tw
   ```
 
 ### Result Snapshot
+
+- output for integers:
+```
+=== Hash Function Observation (C++ Version) ===
+
+=== Table Size m = 10 ===
+Key     Index
+-----------------
+21      4
+22      8
+23      2
+24      7
+25      2
+26      7
+27      2
+28      8
+29      4
+30      0
+51      0
+52      0
+53      0
+54      1
+55      2
+56      3
+57      4
+58      6
+59      8
+60      0
+
+=== Table Size m = 11 ===
+Key     Index
+-----------------
+21      0
+22      4
+23      8
+24      2
+25      7
+26      1
+27      6
+28      1
+29      7
+30      2
+51      7
+52      6
+53      5
+54      5
+55      5
+56      5
+57      5
+58      6
+59      7
+60      8
+
+=== Table Size m = 37 ===
+Key     Index
+-----------------
+21      7
+22      11
+23      15
+24      20
+25      25
+26      30
+27      35
+28      4
+29      10
+30      16
+51      1
+52      11
+53      21
+54      32
+55      6
+56      17
+57      28
+58      3
+59      15
+60      27
+```
+- output for strings
+```
+
+=== String Hash (m = 10) ===
+Key     Index
+-----------------
+cat     4
+dog     9
+bat     2
+cow     4
+ant     2
+owl     4
+bee     0
+hen     2
+pig     0
+fox     8
+
+=== String Hash (m = 11) ===
+Key     Index
+-----------------
+cat     10
+dog     3
+bat     3
+cow     0
+ant     4
+owl     6
+bee     2
+hen     0
+pig     10
+fox     0
+
+=== String Hash (m = 37) ===
+Key     Index
+-----------------
+cat     3
+dog     17
+bat     15
+cow     20
+ant     35
+owl     28
+bee     9
+hen     6
+pig     28
+fox     25
+```
+
 - Example output for integers:
   ```
-  === Hash Function Observation (C Version) ===
-
-  === Table Size m = 10 ===
-  Key     Index
-  -----------------
-  21      1
-  22      2
-  ...
-
-  === Table Size m = 11 ===
-  Key     Index
-  -----------------
-  21      10
-  22      0
-  ...
-
-  === Table Size m = 37 ===
-  Key     Index
-  -----------------
-  21      21
-  22      22
-  ...
-
-  === Hash Function Observation (C++ Version) ===
-
-  === Table Size m = 10 ===
-  Key     Index
-  -----------------
-  21      1
-  22      2
-  ...
-
-  === Table Size m = 11 ===
-  Key     Index
-  -----------------
-  21      10
-  22      0
-  ...
-
-  === Table Size m = 37 ===
-  Key     Index
-  -----------------
-  21      21
-  22      22
-  ...
-  ```
-
-- Example output for strings:
-  ```
-  === String Hash (m = 10) ===
-  Key     Index
-  -----------------
-  cat     0
-  dog     0
-  ...
-
-  === String Hash (m = 11) ===
-  Key     Index
-  -----------------
-  cat     0
-  dog     0
-  ...
-
-  === String Hash (m = 37) ===
-  Key     Index
-  -----------------
-  cat     0
-  dog     0
-  ...
-  ```
-
-- Observations: Outputs align with the analysis, showing better distribution with prime table sizes.
-- Example output for integers:
-  ```
-  Hash table (m=10): [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-  Hash table (m=11): [10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-  Hash table (m=37): [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, ...]
+  Hash table (m=10): [4, 8, 2, 7, 2, 7, 2, 8, 4, 0]
+  Hash table (m=11): [0, 4, 8, 2, 7, 1, 6, 1, 7, 2]
+  Hash table (m=37): [7, 11, 15, 20, 25, 30, 35, 4, 10, 16, ...]
   ```
 - Example output for strings:
   ```
-  Hash table (m=10): ["cat", "dog", "bat", "cow", "ant", ...]
-  Hash table (m=11): ["fox", "cat", "dog", "bat", "cow", ...]
-  Hash table (m=37): ["bee", "hen", "pig", "fox", "cat", ...]
+  Hash table (m=10): ["cat"(4), "dog"(9), "bat"(2), "cow"(4), "ant"(2)...]
+  Hash table (m=11): ["cat"(10), "dog"(3), "bat"(3), "cow"(0), "ant"(4)...]
+  Hash table (m=37): ["cat"(3), "dog"(17), "bat"(15), "cow"(20), "ant"(35)...]
   ```
-- Observations: Outputs align with the analysis, showing better distribution with prime table sizes.
+- Observations: 輸出結果與分析一致。不同於傳統除法法產生連續的規律（如 1, 2, 3...），平方取中法 成功地將索引打散（如 4, 8, 2...），即使在 Table Size 較小的情況下，也能有效破壞連續 Key 的線性規律。
 
 ## Analysis
-- Prime vs non-prime `m`: Prime table sizes generally result in better distribution and fewer collisions.
-- Patterns or collisions: Non-prime table sizes tend to produce repetitive patterns, leading to more collisions.
-- Improvements: Use a prime table size and a well-designed hash function to enhance distribution.
+1.  **消除線性規律**:
+    * 在 **傳統除法** ($k \% m$) 中，若 $m=10$，輸入 `21, 22, 23` 會直接映射為 `1, 2, 3`。這種線性關係在 Hash Table 中容易導致叢集。
+    * 使用 **平方取中法** 後，同樣輸入 `21, 22, 23` 被映射為 `4, 8, 2`。這證明了平方運算成功破壞了輸入資料的線性結構。
+
+2.  **高位資訊的利用**:
+    * 整數測試中的 `51, 52, 53` 在傳統除法 ($m=10$) 下映射為 `1, 2, 3`，與 `21, 22, 23` 發生完全相同的碰撞模式。
+    * 在平方取中法下，`51, 52, 53` 被映射為 `0, 0, 0` (雖有碰撞但模式改變)。這顯示高位數字 (`5` vs `2`) 確實影響了最終結果，而非僅依賴個位數。
+
+3.  **質數的影響**:
+    * 實驗結果再次證實，**質數 (Prime Number)** (如 $m=11, 37$) 能顯著提升雜湊的分佈均勻度。即便演算法僅使用簡單的除法，質數也能提供基本的保護；且若配合平方取中法，能達到更佳的亂度。
 
 ## Reflection
-1. Designing hash functions requires balancing simplicity and effectiveness to minimize collisions.
-2. Table size significantly impacts the uniformity of the hash distribution, with prime sizes performing better.
-3. The design using a prime table size and a linear transformation formula produced the most uniform index sequence.
+1. **設計**：設計雜湊函數時，需要在運算複雜度與碰撞最小化之間取得平衡。
+2. **Table Size 的影響**：Table Size 對雜湊分佈的均勻性有顯著影響，實驗證實質數的大小 (如 11, 37) 能提供較好的分佈效果。
+3. **演算法成效**：本次採用的 **平方取中法 (Mid-Square Method)** 成功解決了連續鍵值產生連續索引的問題。相較於單純的線性除法，非線性的平方運算能更有效地打散數據，避免叢集發生。
