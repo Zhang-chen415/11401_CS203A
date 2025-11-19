@@ -12,14 +12,14 @@ Email: s1131435@mail.yzu.edu.tw
 - Formula / pseudocode:
   ```text
   1. 錯誤檢查：若 m <= 0，顯示錯誤並回傳 0
-  2. 平方 (Square)：long long square = key * key
-  3. 取中 (Extract Middle)：square = square / 10 (移除個位數)
-  4. 取餘 (Modulo)：return square % m
+  2. 平方 ：long long square = key * key
+  3. 取中 ：square = square / 10 (移除個位數)
+  4. 取餘 ：return square % m
   ```
-- Rationale: 本實作採用 平方取中法 (Mid-Square Method) 的變體。
-    平方擴散：先將 Key 平方 ($key^2$)，利用乘法將數值差異擴大，避免連續整數產生連續的 Hash 值。
-    移除末位：將平方數除以 10 (/= 10)，目的是移除變化較規律的末位數字，保留較具隨機性的中間位數。
-    減少碰撞：相較於直接取餘數 ($k \% m$)，此方法能有效打散規律性數據（如 21, 22...）造成的碰撞。此外，程式包含對 $m \le 0$ 的錯誤檢查，確保執行穩健性。
+- Rationale: 本實作採用平方取中法的變體。
+    - 平方擴散：先將 Key 平方 ($key^2$)，利用乘法將數值差異擴大，避免連續整數產生連續的 Hash 值。
+    - 移除末位：將平方數除以 10 (/= 10)，目的是移除變化較規律的末位數字，保留較具隨機性的中間位數。
+    - 減少碰撞：相較於直接取餘數 ($k \% m$)，此方法能有效打散規律性數據（如 21, 22...）造成的碰撞。此外，程式包含對 $m \le 0$ 的錯誤檢查，確保執行穩健性。
 
 ### Non-integer Keys
 - Formula / pseudocode:
