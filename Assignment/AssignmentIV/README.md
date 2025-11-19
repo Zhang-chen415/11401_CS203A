@@ -24,24 +24,51 @@ Email: s1131435@mail.yzu.edu.tw
 ### Non-integer Keys
 - Formula / pseudocode:
   ```text
-  [Your implementation here]
+  1. 錯誤檢查：若 m <= 0 或字串為空，顯示錯誤並回傳 0
+  2. 數值轉換：hash = 加總所有字元的 ASCII 碼
+  3. 平方 ：long long square = hash * hash
+  4. 取中 ：square = square / 10 (移除個位數)
+  5. 取餘 ：return square % m
   ```
-- Rationale: [Explain your approach and its effectiveness for non-integer keys.]
+- Rationale: 針對字串鍵值，結合了 加法雜湊 與 類似餘平方取中法的方法。
+  - 轉換數值：首先計算字串所有字元的 ASCII 總和。
+  - 消除重組碰撞：單純的加法雜湊容易在字母重組時（例如 "abc" 與 "cba" 總和相同）產生碰撞。透過將總和 平方 ($Sum^2$) 並 除以 10，能放大這些總和的特徵，使內容相似的字串也能映射到不同的索引。
+  - 輸入驗證：程式加入了空字串檢查，防止無效輸入導致錯誤。
 
 ## Experimental Setup
 - Table sizes tested (m): 10, 11, 37
 - Test dataset:
   - Integers: 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60
   - Strings: "cat", "dog", "bat", "cow", "ant", "owl", "bee", "hen", "pig", "fox"
-- Compiler: GCC and G++
-- Standard: C23 and C++23
+- Compiler: G++
+- Standard: C++23
 
 ## Results
-| Table Size (m) | Index Sequence         | Observation              |
-|----------------|------------------------|--------------------------|
-| 10             | 1, 2, 3, 4, ...        | Pattern repeats every 10 |
-| 11             | 10, 0, 1, 2, ...       | More uniform             |
-| 37             | 20, 21, 22, 23, ...    | Near-uniform             |
+### Integer Keys Comparison (整數雜湊比較)
+
+**測試數據 (Key)**: 21-30, 51-60
+
+| Table Size (m) | 方法 | 部分範例 | 觀察 |
+| :--- | :--- | :--- | :--- |
+| **$m = 10$** | **傳統除法** | `1, 2, 3, 4, 5...` | **嚴重規律**：Key 連續增加，Index 也連續增加，完全沒有打散效果。 |
+| | **平方取中** | `4, 8, 2, 7, 2...` | **成功打散**：雖然輸入連續，但 Index 呈現跳躍分佈，消除了線性規律。 |
+| **$m = 11$** | **傳統除法** | `10, 0, 1, 2...` | **尚可**：依賴質數 $m$ 來分散，但仍保有連續性。 |
+| | **平方取中** | `0, 4, 8, 2...` | **更佳**：結合質數與平方運算，分佈更加隨機。 |
+| **$m = 37$** | **傳統除法** | `21, 22, 23...` | **線性分佈**：Index 依然隨著 Key 線性增加。 |
+| | **平方取中** | `7, 11, 15, 20...` | **高度分散**：Index 分佈範圍廣且無明顯線性關係。 |
+
+### String Keys Comparison (字串雜湊比較)
+
+**測試數據 (Key)**: "cat", "dog", "bat", "cow", "ant", "owl", "bee", "hen", "pig", "fox"
+
+| Table Size (m) | 方法 (Method) | Collision Example (碰撞範例) | 觀察 (Observation) |
+| :--- | :--- | :--- | :--- |
+| **$m = 10$** | **傳統除法** | `bee` (0), `pig` (0) | 容易在 $m$ 較小時發生碰撞。 |
+| | **平方取中** | `bee` (0), `pig` (0) | 在 $m$ 極小時，雖然仍有碰撞，但整體分佈位置改變 (例如 `dog` 從 4 變 9)。 |
+| **$m = 37$** | **傳統除法** | (無明顯碰撞) | 大 Table Size 下兩者表現皆不錯。 |
+| | **平方取中** | (無明顯碰撞) | 索引分佈更為跳躍，例如 `cow` 從 33 變 20。 |
+
+---
 
 ## Compilation, Build, Execution, and Output
 
