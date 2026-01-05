@@ -92,6 +92,9 @@ public:
         for (int x : table[index]) {
             if (x == key) return true;
         }
+ return false;
+    }
+};
 ```
 ## 5. 優缺點
 
@@ -102,6 +105,3 @@ public:
 ## 缺點
 - 無序性：資料在記憶體中是散亂的，不適合需要「排序」或「範圍搜尋」的場景。
 - 空間利用率：為了減少碰撞，通常需要預留較大的空間。
-        return false;
-    }
-};
